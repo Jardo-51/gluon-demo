@@ -1,0 +1,102 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>com.jardoapps</groupId>
+	<artifactId>gluon-demo</artifactId>
+	<version>0.1.0-SNAPSHOT</version>
+
+	<!-- Name has to be specified for Gluon and cannot contain dashes. https://github.com/gluonhq/substrate/issues/1085#issuecomment-1022043363 -->
+	<name>GluonDemo</name>
+
+	<properties>
+		<java.version>17</java.version>
+		<javafx.version>22.0.2</javafx.version>
+	</properties>
+
+	<dependencies>
+
+		<dependency>
+			<groupId>org.openjfx</groupId>
+			<artifactId>javafx-controls</artifactId>
+			<version>${javafx.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.openjfx</groupId>
+			<artifactId>javafx-fxml</artifactId>
+			<version>${javafx.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
+			<version>1.5.6</version>
+		</dependency>
+
+	</dependencies>
+
+	<build>
+		<plugins>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>${java.version}</source>
+					<target>${java.version}</target>
+					<annotationProcessorPaths>
+						<path>
+							<groupId>org.projectlombok</groupId>
+							<artifactId>lombok</artifactId>
+							<version>${lombok.version}</version>
+						</path>
+					</annotationProcessorPaths>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.openjfx</groupId>
+				<artifactId>javafx-maven-plugin</artifactId>
+				<version>0.0.8</version>
+				<configuration>
+					<mainClass>com.jardoapps.gluon.demo.GluonDemoApplication</mainClass>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>com.gluonhq</groupId>
+				<artifactId>gluonfx-maven-plugin</artifactId>
+				<version>1.0.23</version>
+				<configuration>
+					<verbose>true</verbose>
+					<target>${gluonfx.target}</target>
+					<mainClass>com.jardoapps.gluon.demo.GluonDemoApplication</mainClass>
+					<nativeImageArgs>-march=compatibility</nativeImageArgs>
+					<releaseConfiguration>
+						<vendor>Vendor</vendor>
+						<description>Gluon Demo</description>
+					</releaseConfiguration>
+				</configuration>
+			</plugin>
+
+		</plugins>
+	</build>
+
+	<profiles>
+
+		<profile>
+			<id>desktop</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<properties>
+				<gluonfx.target>host</gluonfx.target>
+			</properties>
+		</profile>
+
+	</profiles>
+
+</project>

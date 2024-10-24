@@ -1,0 +1,57 @@
+name: Release And Package
+
+on: push
+
+jobs:
+  build-windows-installer:
+    runs-on: windows-latest
+
+    steps:
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Add msbuild to PATH
+        uses: microsoft/setup-msbuild@v1.0.2
+
+      - name: Visual Studio shell
+        uses: egor-tensin/vs-shell@v1
+
+      - name: Setup Gluon's GraalVM
+        uses: gluonhq/setup-graalvm@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Make staging directory
+        run: mkdir staging
+
+      - name: Cache local Maven repository
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+
+      - name: Gluon Build and Package
+        shell: cmd
+        run: .\mvnw -B -Pdesktop gluonfx:build gluonfx:package
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+
+      - name: Copy native bundles to staging
+        run: |
+          cp -r target/gluonfx/x86_64-windows/*.exe staging
+          cp -r target/gluonfx/x86_64-windows/*.msi staging
+
+      - name: Upload target for debugging
+        uses: actions/upload-artifact@v4
+        with:
+          name: target
+          path: target
+
+      - name: Upload
+        uses: actions/upload-artifact@v4
+        with:
+          name: Package
+          path: staging
