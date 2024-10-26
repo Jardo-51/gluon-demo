@@ -73,6 +73,9 @@
 						<vendor>Vendor</vendor>
 						<description>Gluon Demo</description>
 					</releaseConfiguration>
+					<reflectionList>
+						<list>javafx.scene.control.ComboBox</list>
+					</reflectionList>
 				</configuration>
 			</plugin>
 
