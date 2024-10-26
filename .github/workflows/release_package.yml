@@ -39,6 +39,31 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
 
+      - name: Try running the built image
+        shell: powershell
+        continue-on-error: false
+        run: |
+          # Start the process in the background, redirecting stdout and stderr to a file
+          $process = Start-Process -FilePath target/gluonfx/x86_64-windows/GluonDemo.exe -RedirectStandardOutput process_output.log -RedirectStandardError process_output_err.log -NoNewWindow -PassThru
+
+          # Wait for a few seconds (adjust as needed)
+          Start-Sleep -Seconds 10
+
+          Write-Host "==== Printing process_output.log for debugging:"
+          Get-Content -Path process_output.log
+
+          Write-Host "==== Printing process_output_err.log for debugging:"
+          Get-Content -Path process_output_err.log
+
+          # Kill the process if it is still running
+          if (Get-Process -Id $process.Id -ErrorAction SilentlyContinue) {
+            Write-Host "==== Process is still running, terminating it."
+            Stop-Process -Id $process.Id
+          } else {
+            Write-Host "==== Process has already exited, but it should have been running."
+            Exit 1
+          }
+
       - name: Copy native bundles to staging
         run: |
           cp -r target/gluonfx/x86_64-windows/*.exe staging
