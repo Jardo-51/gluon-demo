@@ -74,6 +74,7 @@
 						<description>Gluon Demo</description>
 					</releaseConfiguration>
 					<reflectionList>
+						<list>com.jardoapps.gluon.demo.controller.MainController</list>
 						<list>javafx.scene.control.ComboBox</list>
 					</reflectionList>
 				</configuration>
